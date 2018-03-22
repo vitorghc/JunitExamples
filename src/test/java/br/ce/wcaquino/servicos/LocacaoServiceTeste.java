@@ -1,10 +1,13 @@
 package br.ce.wcaquino.servicos;
 
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -19,22 +22,28 @@ import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTeste {
 	
+	private LocacaoService service;
+	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
+	
+	@Before
+	public void setup(){
+		service = new LocacaoService();
+	}
 
 	@Test
 	public void testeLocacao() throws Exception {
 
 		// /cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Jose");
-		Filme filme = new Filme("Filme 1", 2, 5.0);
-
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+		
 		// ação
-		Locacao locacao = service.alugarFilme(usuario, filme);
+		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		// verificação
 		error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(5.0)));
@@ -45,27 +54,25 @@ public class LocacaoServiceTeste {
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void testeLocacao_filmeSemEstoque() throws Exception {
 		// /cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Jose");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
 
 		// ação
-		service.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, filmes);
 	}
 	
 
 	@Test
 	public void teteLocacao_usuarioVazio() throws FilmeSemEstoqueException {
 		// cenario
-
-		LocacaoService service = new LocacaoService();
-		Filme filme = new Filme("Filme 1", 1, 5.0);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
 		// ação
 			try {
-				service.alugarFilme(null, filme);
+				service.alugarFilme(null, filmes);
 				Assert.fail();
 			} catch (LocadoraException e) {
+				// affeterThat mensagem atual x mensagem esperada
 				Assert.assertThat(e.getMessage(), CoreMatchers.is("Usuario vazio"));
 			}
 	}

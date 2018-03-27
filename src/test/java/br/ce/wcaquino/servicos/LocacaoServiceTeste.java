@@ -36,7 +36,7 @@ public class LocacaoServiceTeste {
 	}
 
 	@Test
-	public void testeLocacao() throws Exception {
+	public void deveAlugarFilme() throws Exception {
 
 		// /cenário
 		Usuario usuario = new Usuario("Jose");
@@ -52,7 +52,7 @@ public class LocacaoServiceTeste {
 	}
 	
 	@Test(expected = FilmeSemEstoqueException.class)
-	public void testeLocacao_filmeSemEstoque() throws Exception {
+	public void naoDEveAlugarFilmeSemEstoque() throws Exception {
 		// /cenário
 		Usuario usuario = new Usuario("Jose");
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
@@ -63,7 +63,7 @@ public class LocacaoServiceTeste {
 	
 
 	@Test
-	public void teteLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
 		// cenario
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
@@ -78,7 +78,7 @@ public class LocacaoServiceTeste {
 	}
 	
 	@Test
-	public void teteLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
 		// cenario
 
 		LocacaoService service = new LocacaoService();
@@ -88,5 +88,82 @@ public class LocacaoServiceTeste {
 		exception.expect(LocadoraException.class);
 		exception.expectMessage("Filme vazio");
 		service.alugarFilme(usuario, null);
+	}
+	
+	@Test
+	public void devePagar70pctFilme3() throws FilmeSemEstoqueException,
+			LocadoraException {
+		// cenario
+		Usuario usu = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 2, 4.0),
+				new Filme("Filme 2", 2, 4.0), 
+				new Filme("Filme 3", 2, 4.0));
+
+		// acao
+		Locacao result = service.alugarFilme(usu, filmes);
+
+		// verificacao
+		Assert.assertThat(result.getValor(), CoreMatchers.is(11.0));
+	}
+	
+	
+	@Test
+	public void devePagar50pctFilme4() throws FilmeSemEstoqueException,
+			LocadoraException {
+		// cenario
+		Usuario usu = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 2, 4.0),
+				new Filme("Filme 2", 2, 4.0), 
+				new Filme("Filme 3", 2, 4.0),
+				new Filme("Filme 4", 2, 4.0));
+
+		// acao
+		Locacao result = service.alugarFilme(usu, filmes);
+
+		// verificacao
+		Assert.assertThat(result.getValor(), CoreMatchers.is(13.0));
+	}
+	
+	
+	@Test
+	public void devePagar25pctFilme5() throws FilmeSemEstoqueException,
+			LocadoraException {
+		// cenario
+		Usuario usu = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 2, 4.0), 
+				new Filme("Filme 2", 2, 4.0), 
+				new Filme("Filme 3", 2, 4.0), 
+				new Filme("Filme 4", 2, 4.0), 
+				new Filme("Filme 5", 2, 4.0));
+
+		// acao
+		Locacao result = service.alugarFilme(usu, filmes);
+
+		// verificacao
+		Assert.assertThat(result.getValor(), CoreMatchers.is(14.0));
+	}
+	
+	
+	@Test
+	public void devePagar0pctFilme6() throws FilmeSemEstoqueException,
+			LocadoraException {
+		// cenario
+		Usuario usu = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 2, 4.0), 
+				new Filme("Filme 2", 2, 4.0), 
+				new Filme("Filme 3", 2, 4.0), 
+				new Filme("Filme 4", 2, 4.0), 
+				new Filme("Filme 5", 2, 4.0),
+				new Filme("Filme 5", 2, 4.0));
+
+		// acao
+		Locacao result = service.alugarFilme(usu, filmes);
+
+		// verificacao
+		Assert.assertThat(result.getValor(), CoreMatchers.is(14.0));
 	}
 }

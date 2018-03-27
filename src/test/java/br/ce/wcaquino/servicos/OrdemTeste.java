@@ -7,7 +7,7 @@ import org.junit.runners.MethodSorters;
 
 
 /**
- * classe teste para testarmos como ordenar o teste, .
+ * classe teste para testarmos como ordenar o teste,
  * pois o Junit não garante que os testes sejam executados
  * da mesma forma como estão na sequencia da Classe
  * 

@@ -17,6 +17,7 @@ import org.junit.rules.ExpectedException;
 
 import br.ce.wcaquinho.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquinho.exceptions.LocadoraException;
+import br.ce.wcaquinho.matchers.MatchersProprios;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -39,7 +40,7 @@ public class LocacaoServiceTeste {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+//		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		// /cenário
 		Usuario usuario = new Usuario("Jose");
@@ -51,7 +52,9 @@ public class LocacaoServiceTeste {
 		// verificação
 		error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(5.0)));
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
+		error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+		error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHjComDiferecaDeDias(1));
 	}
 	
 	@Test(expected = FilmeSemEstoqueException.class)
@@ -183,8 +186,7 @@ public class LocacaoServiceTeste {
 		Locacao result = service.alugarFilme(usu, filmes);
 		
 		//verificacao
-		boolean ehSegunda = DataUtils.verificarDiaSemana(result.getDataRetorno(), Calendar.SUNDAY);
-		Assert.assertTrue(ehSegunda);
-		
+		Assert.assertThat(result.getDataRetorno(), MatchersProprios.caiEm(Calendar.SUNDAY));
+		Assert.assertThat(result.getDataRetorno(), MatchersProprios.caiNumaSegunda());
 	}
 }
